@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Festival Poster Maker</title>
+  <style>
+    body { text-align: center; font-family: Arial, sans-serif; }
+    canvas { border: 1px solid #ccc; margin: 10px; }
+  </style>
+</head>
+<body>
+  <h2>🎉 Festival Poster Maker 🎉</h2>
+
+  <!-- Poster select -->
+  <select id="templateSelector" onchange="changePoster(this.value)">
+    <option value="diwali.png">Diwali</option>
+    <option value="holi.png">Holi</option>
+  </select><br><br>
+
+  <!-- Name input -->
+  <input type="text" id="nameInput" placeholder="Apna Naam Likho"><br><br>
+
+  <!-- Photo upload -->
+  <input type="file" id="photoInput" accept="image/*"><br><br>
+
+  <!-- Canvas -->
+  <canvas id="posterCanvas" width="600" height="800"></canvas><br>
+
+  <!-- Buttons -->
+  <button onclick="addText()">Naam Add Karo</button>
+  <button onclick="downloadPoster()">Download Poster</button>
+
+  <script>
+    let canvas = document.getElementById("posterCanvas");
+    let ctx = canvas.getContext("2d");
+    let poster = new Image();
+
+    // default poster
+    poster.src = "diwali.png";
+    poster.onload = () => ctx.drawImage(poster, 0, 0, canvas.width, canvas.height);
+
+    function changePoster(src) {
+      poster.src = src;
+      poster.onload = () => ctx.drawImage(poster, 0, 0, canvas.width, canvas.height);
+    }
+
+    function addText() {
+      ctx.drawImage(poster, 0, 0, canvas.width, canvas.height);
+      let name = document.getElementById("nameInput").value;
+      ctx.font = "40px Arial";
+      ctx.fillStyle = "red";
+      ctx.fillText(name, 200, 750);
+    }
+
+    document.getElementById("photoInput").addEventListener("change", function(e) {
+      let reader = new FileReader();
+      reader.onload = function(event) {
+        let img = new Image();
+        img.onload = function() {
+          ctx.drawImage(poster, 0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 200, 500, 200, 200); // adjust placement
+        }
+        img.src = event.target.result;
+      }
+      reader.readAsDataURL(e.target.files[0]);
+    });
+
+    function downloadPoster() {
+      let link = document.createElement('a');
+      link.download = 'festival-poster.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+  </script>
+</body>
+</html>
